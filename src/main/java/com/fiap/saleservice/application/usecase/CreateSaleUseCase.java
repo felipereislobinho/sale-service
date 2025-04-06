@@ -30,10 +30,10 @@ public class CreateSaleUseCase {
 
     public CreateSaleResponse execute(Long vehicleId, String buyer) {
 
-        // 1. Verificar se o veículo existe
+
         VehicleResponse vehicle = vehicleClient.getVehicleById(vehicleId);
 
-        // 2. Verificar se o status do veículo é DISPONIVEL
+
         if (!"DISPONIVEL".equalsIgnoreCase(vehicle.getStatus())) {
             throw new BusinessException("Veículo não está disponível para venda");
         }
@@ -44,10 +44,21 @@ public class CreateSaleUseCase {
         // Salva primeiro para gerar o ID
         Sale savedSale = gateway.save(sale);
 
-        // Depois de salvo e com ID, chama o serviço de pagamento
-        PaymentResponse paymentResponse = paymentClient.createPayment(new PaymentRequest(sale.getId(), sale.getSaleValue()));
+        try {
+            // Depois de salvo e com ID, chama o serviço de pagamento
+            PaymentResponse paymentResponse = paymentClient.createPayment(new PaymentRequest(savedSale.getId(), savedSale.getSaleValue()));
+            return new CreateSaleResponse(savedSale, paymentResponse.getId());
+        } catch (Exception ex) {
+            // Se der erro no pagamento, remove a venda criada.
+            gateway.delete(savedSale.getId());
+            throw new BusinessException("Erro ao criar pagamento. Venda cancelada.", ex);
+        }
 
-        return new CreateSaleResponse(savedSale, paymentResponse.getId());
+
+//        // Depois de salvo e com ID, chama o serviço de pagamento
+//        PaymentResponse paymentResponse = paymentClient.createPayment(new PaymentRequest(sale.getId(), sale.getSaleValue()));
+//
+//        return new CreateSaleResponse(savedSale, paymentResponse.getId());
 
 
     }

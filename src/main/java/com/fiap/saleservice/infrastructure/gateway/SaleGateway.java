@@ -9,4 +9,5 @@ public interface SaleGateway {
     Sale save(Sale sale);
     List<Sale> findAll();
     Optional<Sale> findById(Long id);
+    void delete(Long saleId);
 }

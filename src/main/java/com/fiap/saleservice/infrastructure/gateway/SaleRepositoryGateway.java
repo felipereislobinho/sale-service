@@ -30,4 +30,9 @@ public class SaleRepositoryGateway implements SaleGateway {
     public Optional<Sale> findById(Long id) {
         return repository.findById(id);
     }
+
+    @Override
+    public void delete(Long saleId) {
+        repository.deleteById(saleId);
+    }
 }
