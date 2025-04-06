@@ -1,0 +1,30 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sales_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+vehicle-service:
+  url: http://localhost:8081
+client:
+  payment:
+    url: http://localhost:8083
+
+logging:
+  level:
+    com.fiap.saleservice.infrastructure.client.PaymentClient: DEBUG
+    org.springframework.web.client.RestTemplate: DEBUG
+    feign: DEBUG
+

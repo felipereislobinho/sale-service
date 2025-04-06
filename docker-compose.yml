@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  sale-db:
+    image: postgres
+    container_name: sale-db
+    environment:
+      POSTGRES_DB: sales_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+
+  sale-service:
+    build: .
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://sale-db:5432/sales_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - sale-db
